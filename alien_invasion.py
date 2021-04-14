@@ -30,6 +30,11 @@ class AlienInvasion:
         
         # 设置窗体名称
         pygame.display.set_caption("Alien Invasion")
+
+        self.init_every_exponent()
+
+    def init_every_exponent(self):
+        """重构，创建东西太多，简化构造函数"""
         # 创建飞船类
         self.ship = Ship(self)
         # 创建子弹类的group，group类似于列表
@@ -202,6 +207,13 @@ class AlienInvasion:
         self.setting.ship_speed *= self.setting.speedup
         self.setting.alien_score = int(self.setting.alien_score * self.setting.score_up)
 
+    def update_game_level(self):
+        self.bullets.empty()
+        self.create_alien_fleet()
+        self.game_more_difficult()
+        self.status.level += 1
+        self.score_board.prep_level()
+
     def check_collision(self):
         """下面的方法用于检测子弹与外星人的碰撞，发生碰撞就在它返回的字典里添加一个键值对，这个字典是嵌套，在字典中嵌套列表，{ '子弹' ：[外星人列表],.....}两个True表示删除这两个rect元素"""
         collisions = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
@@ -215,11 +227,7 @@ class AlienInvasion:
 
         # 当外星人群为空，清空子弹，重建外星人群,提高游戏难度
         if not self.aliens:
-            self.bullets.empty()
-            self.create_alien_fleet()
-            self.game_more_difficult()
-            self.status.level += 1
-            self.score_board.prep_level()
+            self.update_game_level()
 
     def update_bullets(self):
         """更新子弹位置，限制子弹数量，对group进行删除sprite"""
